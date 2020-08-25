@@ -1,0 +1,14 @@
+.form {
+  width: 400px;
+}
+
+.title {
+  text-align: center;
+}
+
+h2 {
+  font-size: 32px;
+  color: var(--jm-purple);
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
