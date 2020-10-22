@@ -1,0 +1,36 @@
+.conversation-block{
+    height: 100%;
+    border-color: var(--jm-dark-grey);
+    border-width: 2px;
+    border-style: none solid none solid;
+}
+
+.conversation-box{
+    width: 100%;
+    border-color: var(--jm-dark-grey);
+    border-width: 2px;
+    border-style: solid none solid none;
+    height: auto;
+}
+
+.height-fix{
+    height: 100%;
+}
+
+.conversation-box-title{
+    padding-left: 4px;
+    font-size: 26px;
+    color: black;
+}
+
+.conversation-box-text{
+    font-size: 20px;
+    color: var(--jm-dark-grey);
+    padding: 4px;
+}
+
+.conversation-block-title{
+    text-align: center;
+    font-size: 32px;
+    color: var(--jm-purple);
+}
