@@ -1,6 +1,6 @@
 import os
 from flask import Flask, send_from_directory
-from authenticate.user import logInWebUser, logOutWebUser, dashboardWebUser, authenticateDeviceUser, createUser, createAnonDeviceUser, createAnonWebUser
+from backend.interaction import createUser, createDevice#, logInWebUser, logOutWebUser, dashboardWebUser, authenticateDeviceUser, createAnonDeviceUser, createAnonWebUser
 from flask_cors import CORS
 
 
@@ -9,37 +9,41 @@ CORS(app)
 
 #backend
 
-@app.route('/login-web-user', methods=['POST'])
-def loginwebuser():
-    return logInWebUser()
+# @app.route('/login-web-user', methods=['POST'])
+# def loginwebuser():
+#     return logInWebUser()
 
-@app.route('/logout-web-user', methods=['POST'])
-def logoutwebuser():
-    return logOutWebUser()
+# @app.route('/logout-web-user', methods=['POST'])
+# def logoutwebuser():
+#     return logOutWebUser()
 
-@app.route('/dashboard-web-user', methods=['POST'])
-def dashboardwebuser():
-    return dashboardWebUser()
+# @app.route('/dashboard-web-user', methods=['POST'])
+# def dashboardwebuser():
+#     return dashboardWebUser()
 
 @app.route('/create-user', methods=['POST'])
 def createuser():
     return createUser()
 
+@app.route('/create-device', methods=['POST'])
+def createdevice():
+    return createDevice()
+
 
 #in time
 
-@app.route('/authenticate-device-user', methods=['POST'])
-def authDeviceUser():
-    return authenticateDeviceUser()
-    #authenticateDevice()
+# @app.route('/authenticate-device-user', methods=['POST'])
+# def authDeviceUser():
+#     return authenticateDeviceUser()
+#     #authenticateDevice()
 
-@app.route('/create-anonymous-web-user', methods=['POST'])
-def creAnonWebUser():
-    return createAnonWebUser()
+# @app.route('/create-anonymous-web-user', methods=['POST'])
+# def creAnonWebUser():
+#     return createAnonWebUser()
 
-@app.route('/create-anonymous-device-user', methods=['POST'])
-def creAnonDeviceUser():
-    return createAnonDeviceUser()
+# @app.route('/create-anonymous-device-user', methods=['POST'])
+# def creAnonDeviceUser():
+#     return createAnonDeviceUser()
 
 
 #frontend

@@ -4526,6 +4526,11 @@ find-up@^3.0.0:
   dependencies:
     locate-path "^3.0.0"
 
+flask-cors@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/flask-cors/-/flask-cors-0.0.1.tgz#99cd74b648800cf56db84cdc2fafea97d136888d"
+  integrity sha512-ZEhUp1JH+Qxru2yOhsRhIgA18QR7D4S2wQtOqu28PvfeDFzz97Fu6M1fUXsjDwkEqSTuKdmJ34aCuYEr8dWthA==
+
 flat-cache@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-2.0.1.tgz#5d296d6f04bda44a4630a301413bdbc2ec085ec0"
@@ -8854,11 +8859,6 @@ react@^16.13.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-
-reactjs-popup@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/reactjs-popup/-/reactjs-popup-1.5.0.tgz#09ef15daf9bf932e9adbf595f3976851c24913cf"
-  integrity sha512-9uoxUAcUomnNoBtdYXBmgsF4w46llsogE3tOvLb5IkR5MMrD6UZJK20ip9kDKXCYubSxNkdfQKqSb/c95rf/qA==
 
 read-pkg-up@^2.0.0:
   version "2.0.0"

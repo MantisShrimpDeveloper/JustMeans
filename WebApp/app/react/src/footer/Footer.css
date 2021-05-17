@@ -1,0 +1,23 @@
+.footer {
+  height: 75px;
+  width: 100vw;
+  background-color: var(--jm-dark-grey)
+}
+
+.footer-link {
+  text-decoration: none;
+  font-size: 16px;
+  color: var(--jm-purple);
+  padding: 10px;
+}
+
+.footer-link:hover {
+  color: #462691
+}
+
+.donate {
+  text-decoration: none;
+  font-size: 16px;
+  color: var(--jm-purple);
+  padding: 10px;
+}

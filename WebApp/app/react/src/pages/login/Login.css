@@ -2,13 +2,21 @@
   width: 400px;
 }
 
-.title {
+.center {
   text-align: center;
 }
 
 h2 {
   font-size: 32px;
   color: var(--jm-purple);
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+
+h3 {
+  font-size: 12px;
+  color: red;
+  font-weight: normal;
   margin-top: 0em;
   margin-bottom: 0em;
 }

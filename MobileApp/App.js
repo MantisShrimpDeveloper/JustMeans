@@ -4,7 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import colors from './design/tools.js'
 
-import Header from './Header.js'
+import { BackButton, BlankButton } from './Header.js';
+import Header from './Header.js';
 
 import Conversations from './screens/Conversations.js'
 import Profile from './screens/Profile.js'
@@ -37,7 +38,7 @@ export default function App() {
               <Stack.Screen name='Splash' component={Splash} options={{headerStyle: {backgroundColor: colors.black}, headerTitle: props => <Header title='Just Means' {...props} /> }}/>
               <Stack.Screen name='UserLogin' component={UserLogin}/>
               <Stack.Screen name='AnonymousLogin' component={AnonymousLogin}/>
-              <Stack.Screen name='CreateUser' component={CreateUser} options={{headerLeft: null, headerStyle: {backgroundColor: colors.black}, headerTitle: props => <Header title='Create User' leftButton='back' {...props} /> }}/>
+              <Stack.Screen name='CreateUser' component={CreateUser} options={({navigation}) => ({headerLeft: () => <BackButton nav={navigation.navigate} page={'Splash'}/> , headerStyle: {backgroundColor: colors.black}, headerTitle: props => <Header title='Create User' {...props} />, headerRight: () => <BlankButton/> })}/>
             </Stack.Navigator>
           )
         }
@@ -53,5 +54,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
     alignItems: 'stretch',
     justifyContent: 'space-between',
+  },
+  backbutton: {
+    height: 30,
+    width: 30,
   },
 });

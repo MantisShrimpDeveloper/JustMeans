@@ -7,7 +7,6 @@ import { Input } from '../../tools/Input.js';
 import { Button } from '../../tools/Button.js';
 import { Link, Redirect } from "react-router-dom";
 import { TitleComponent } from '../../TitleComponent.jsx';
-import Popup from "reactjs-popup";
 
 const url = 'http://localhost:5000'
 
@@ -16,9 +15,11 @@ export default function Login() {
   const [username, setUsername] = React.useState("");
   const [passphrase1, setPassphrase1] = React.useState("");
   const [passphrase2, setPassphrase2] = React.useState("");
+  const [userError, setUserError] = React.useState("");
+
   const [anonname, setAnonname] = React.useState("");
-  const [loginError, setLoginError] = React.useState(false);
-  const [errorPhrase, setErrorPhrase] = React.useState("No error");
+  const [anonError, setAnonError] = React.useState("");
+
   const [loggedIn, setLoggedIn] = React.useState(false);
 
   const [cookies, setCookie] = useCookies(['username']);
@@ -38,15 +39,13 @@ export default function Login() {
         setCookie('username', username);
         setLoggedIn(true);
       }else{
-        setErrorPhrase("Login Error: " + result['status']);
-        setLoginError(true);
+        setUserError(result['status']);
       }
     });
   }
 
   const handleAnonymousLogin = async () => {
-    setLoginError(true);
-    setErrorPhrase("Coming Soon!");
+    setAnonError("Coming Soon!");
     /*
     const params = {type:'anonymous', anonname};
     console.log(JSON.stringify(params))
@@ -73,19 +72,27 @@ export default function Login() {
   return (
     <div>
       <TitleComponent title='Login'/>
-      <Popup trigger={null} modal open={loginError}>
-        {errorPhrase}
-      </Popup>
       <Grid container className='page' direction='column' alignItems='center' justify='center'>
         <Grid item>
           <Grid container direction='row' spacing={10}>
           <Grid item className='form'>
               <Grid container direction='column' spacing={2} justify='center'>
-                <Grid item className='title'>
+                <Grid item className='center'>
                   <h2>
                     Total Anonymity
                   </h2>
                 </Grid>
+                {
+                  anonError == "" ? (
+                    null
+                  ) : (
+                    <Grid item className='center'>
+                      <h3>
+                      {anonError}
+                      </h3>
+                    </Grid>
+                  )
+                }
                 <Grid item>
                   <Input
                     id={'anonymous username'}
@@ -107,11 +114,22 @@ export default function Login() {
             </Grid>
             <Grid item className='form'>
               <Grid container direction='column' spacing={2}>
-                <Grid item className='title'>
+                <Grid item className='center'>
                   <h2>
                     User Login
                   </h2>
                 </Grid>
+                {
+                  userError == "" ? (
+                    null
+                  ) : (
+                    <Grid item className='center'>
+                      <h3>
+                      {userError}
+                      </h3>
+                    </Grid>
+                  )
+                }
                 <Grid item>
                   <Input
                     id={'username'}
