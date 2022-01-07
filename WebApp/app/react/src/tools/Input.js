@@ -15,7 +15,6 @@ export class Input extends React.Component {
   }
 
   changeValue(event) {
-    console.log(this.state.error)
     const value = event.target.value;
     const error = this.props.errorMethod ? this.props.errorMethod(value) : "";
     this.setState({ value, error });

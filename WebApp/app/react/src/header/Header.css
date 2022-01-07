@@ -1,7 +1,11 @@
 .header {
-  padding: 9px;
+  height: 75px;
   width: 100vw;
   background-color: var(--jm-dark-grey)
+}
+
+.header-height {
+  height: 100%;
 }
 
 .site-title {

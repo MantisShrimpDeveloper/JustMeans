@@ -16,11 +16,11 @@ import { CookiesProvider } from 'react-cookie';
 function App() {
   return (
     <BrowserRouter>
-        <Grid container direction='column' justify='space-between' alignItems='stretch' className="App">
+        <Grid container direction='column' className="App">
           <Grid item>
             <Header/>
           </Grid>
-          <Grid item>
+          <Grid item className='page'>
             <CookiesProvider>
               <Switch>
                 <Route path='/downloads'>

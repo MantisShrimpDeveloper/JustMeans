@@ -1,170 +1,170 @@
-from backend.tools import hashAlg, newUsernameCheck, newPassphraseCheck, generateIterations, generateSalt
+from backend.tools import hash_algorithm, new_passphrase2_check, new_passphrase1_check, generate_iterations, generate_salt, new_username_check
 import backend.db_conn as db
 from flask import request, make_response, jsonify
+from flask.wrappers import Response
 
-def create():
+# user protocols
+
+def create() -> Response:
     username = request.get_json()['username']
     passphrase1 = request.get_json()['passphrase1']
     passphrase2 = request.get_json()['passphrase2']
     email = request.get_json()['email']
 
-    salt1 = generateSalt()
-    salt2 = generateSalt()
+    salt1 = generate_salt()
+    salt2 = generate_salt()
 
-    iterations1 = generateIterations()
-    iterations2 = generateIterations()
+    iterations1 = generate_iterations()
+    iterations2 = generate_iterations()
 
-    checkPass, errorMessage = newUsernameCheck(username)
+    checkPass, errorMessage = new_username_check(username)
     if not checkPass:
         return make_response(jsonify(status="failed", error=errorMessage))
 
-    checkPass, errorMessage = newPassphraseCheck(passphrase1)
+    checkPass, errorMessage = new_passphrase1_check(passphrase1)
     if not checkPass:
         return make_response(jsonify(status="failed", error=errorMessage))
 
-    checkPass, errorMessage = newPassphraseCheck(passphrase2)
+    checkPass, errorMessage = new_passphrase2_check(passphrase2)
     if not checkPass:
         return make_response(jsonify(status="failed", error=errorMessage))
 
-    if db.isUser(username):
-        return make_response(jsonify(status="failed", error="username is already taken"))
+    if db.is_user(username):
+        return make_response(jsonify(status="failed", error="username is unavailable"))
 
-    passhash1 = hashAlg(passphrase1, 0)
-    passhash2 = hashAlg(passphrase2, 1)
+    passhash1 = hash_algorithm(passphrase1, salt1, iterations1)
+    passhash2 = hash_algorithm(passphrase2, salt2, iterations2)
 
-    if db.createUser(username, email, passhash1, passhash2, salt1, salt2, iterations1, iterations2):
+    if db.create_user(username, email, passhash1, passhash2, salt1, salt2, iterations1, iterations2):
         return make_response(jsonify(status="success"))
 
-    return make_response(jsonify(status="falied", error="unknown error occured"))
+    return make_response(jsonify(status="failed", error="unknown error occured"))
 
-def authenticate():
+def authenticate() -> tuple:
     username = request.get_json()['username']
     passphrase1 = request.get_json()['passphrase1']
     passphrase2 = request.get_json()['passphrase2']
 
-    passhash1 = hashAlg(passphrase1, 0)
-    passhash2 = hashAlg(passphrase2, 1)
-
-    if not db.isUser(username):
-        return False, make_response(jsonify(status="no user with that username"))
-
-    user = db.getUser(username)
+    userID = db.is_user(username)
+    if not userID:
+        return False, make_response(jsonify(status="failed", error="no user with that username"))
+    user = db.get_user(userID)
     
-    if passhash1 == user[2] and passhash2 == user[3]:
+    passhash1 = hash_algorithm(passphrase1, user.salt1, user.iterations1)
+    passhash2 = hash_algorithm(passphrase2, user.salt2, user.iterations2)
+    
+    if passhash1 == user.passhash1 and passhash2 == user.passhash2:
         return True, None
     else:
-        return False, make_response(jsonify(status="incorrect passphrases"))
+        return False, make_response(jsonify(status="failed", error="incorrect passphrases"))
 
-def delete():
+def delete() -> Response:
     username = request.get_json()['username']
 
-    if not db.isUser(username):
-        return False, make_response(jsonify(status="no user with that username"))
+    userID = db.is_user(username)
+    if not userID:
+        return make_response(jsonify(status="failed", error="no user with that username"))
 
-    user = db.getUser(username)
-
-    devices = db.getDevicesOfUser(user[0])
+    devices = db.get_devices_of_user(userID)
     for device in devices:
         if not db.deleteDevice(device[0]):
-            return make_response(jsonify(status="device " + device[2] + " deletion unsuccessful"))
+            return make_response(jsonify(status="failed", error="device " + device[2] + " deletion unsuccessful"))
 
-    if db.deleteUser(user[0]):
+    if db.delete_user(userID):
         return make_response(jsonify(status="success"))
     else:
-        return make_response(jsonify(status="user deletion unsuccessful"))
+        return make_response(jsonify(status="failed", error="user deletion unsuccessful"))
 
-def createTrust():
+def username_search() -> Response:
+    partial_username = request.get_json()['partial_username']
+    print(partial_username)
+    usernames = db.search_users(partial_username)
+    return make_response(jsonify(status="success", usernames=usernames))
+
+# trust protocols
+
+def create_trust(message: str) -> Response:
     username = request.get_json()['username']
     otherUsername = request.get_json()['otherUsername']
 
-    if not db.isUser(username):
-        return False, make_response(jsonify(status="no user with that username"))
+    userID = db.is_user(username)
+    if not userID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    user = db.getUser(username)
+    otherUserID = db.is_user(otherUsername)
+    if not otherUserID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    if not db.isUser(otherUsername):
-        return False, make_response(jsonify(status="no other user with that username"))
+    if db.is_trust(userID, otherUserID):
+        return make_response(jsonify(status="failed", error="trust already exists", message=message))
 
-    otherUser = db.getUser(otherUsername)
+    if not db.is_trust_notification(userID, otherUserID):
+        return make_response(jsonify(status="failed", error="trust notification doesn't exist", message=message))
 
-    if db.isTrust(user[0], otherUser[0]):
-        return False, make_response(jsonify(status="trust already exists"))
+    if not db.delete_trust_notification(userID, otherUserID):
+        return make_response(jsonify(status="failed", error="trust notification deletion unsuccessful", message=message))
 
-    if not db.isTrustNot(otherUser[0], user[0]):
-        return False, make_response(jsonify(status="trust notification doesn't exist"))
-
-    if not db.deleteTrustNot(otherUser[0], user):
-        return make_response(jsonify(status="trust notification deletion unsuccessful"))
-
-    if db.createTrust(user[0], otherUser[0]):
-        return make_response(jsonify(status="success"))
+    if db.create_trust(userID, otherUserID):
+        return make_response(jsonify(status="success", message=message))
     else:
-        return make_response(jsonify(status="trust creation unsuccessful"))
+        return make_response(jsonify(status="failed", error="trust creation unsuccessful", message=message))
 
-def deleteTrust():
+def delete_trust(message: str) -> Response:
     username = request.get_json()['username']
     otherUsername = request.get_json()['otherUsername']
 
-    if not db.isUser(username):
-        return False, make_response(jsonify(status="no user with that username"))
+    userID = db.is_user(username)
+    if not userID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    user = db.getUser(username)
+    otherUserID = db.is_user(otherUsername)
+    if not otherUserID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    if not db.isUser(otherUsername):
-        return False, make_response(jsonify(status="no other user with that username"))
+    if not db.is_trust(userID, otherUserID):
+        return make_response(jsonify(status="failed", error="trust doesn't exist", message=message))
 
-    otherUser = db.getUser(otherUsername)
-
-    if not db.isTrust(user[0], otherUser[0]):
-        return False, make_response(jsonify(status="trust doesn't exist"))
-
-    if db.deleteTrust(user[0], otherUser[0]):
-        return make_response(jsonify(status="success"))
+    if db.delete_trust(userID, otherUserID):
+        return make_response(jsonify(status="success", message=message))
     else:
-        return make_response(jsonify(status="trust deletion unsuccessful"))
+        return make_response(jsonify(status="failed", error="trust deletion unsuccessful", message=message))
 
-def createTrustNot():
+def create_trust_notification(message: str) -> Response:
     username = request.get_json()['username']
     otherUsername = request.get_json()['otherUsername']
 
-    if not db.isUser(username):
-        return False, make_response(jsonify(status="no user with that username"))
+    userID = db.is_user(username)
+    if not userID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    user = db.getUser(username)
+    otherUserID = db.is_user(otherUsername)
+    if not otherUserID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    if not db.isUser(otherUsername):
-        return False, make_response(jsonify(status="no other user with that username"))
+    if db.is_trust_notification(otherUserID, userID):
+        return make_response(jsonify(status="failed", error="trust notification already exists", message=message))
 
-    otherUser = db.getUser(otherUsername)
-
-    if db.isTrustNot(otherUser[0], user[0]):
-        return False, make_response(jsonify(status="trust notification already exists"))
-
-    if db.createTrustNot(otherUser[0], user):
-        return make_response(jsonify(status="success"))
+    if db.create_trust_notification(otherUserID, userID):
+        return make_response(jsonify(status="success", message=message))
     else:
-        return make_response(jsonify(status="trust notification creation unsuccessful"))
+        return make_response(jsonify(status="failed", error="trust notification creation unsuccessful", message=message))
 
-
-
-def deleteTrustNot():
+def delete_trust_notification(message: str) -> Response:
     username = request.get_json()['username']
     otherUsername = request.get_json()['otherUsername']
 
-    if not db.isUser(username):
-        return False, make_response(jsonify(status="no user with that username"))
+    userID = db.is_user(username)
+    if not userID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    user = db.getUser(username)
+    otherUserID = db.is_user(otherUsername)
+    if not otherUserID:
+        return make_response(jsonify(status="failed", error="no user with that username", message=message))
 
-    if not db.isUser(otherUsername):
-        return False, make_response(jsonify(status="no other user with that username"))
+    if not db.is_trust_notification(userID, otherUserID):
+        return make_response(jsonify(status="failed", error="trust notification doesn't exist", message=message))
 
-    otherUser = db.getUser(otherUsername)
-
-    if not db.isTrustNot(otherUser[0], user[0]):
-        return False, make_response(jsonify(status="trust notification doesn't exist"))
-
-    if db.deleteTrustNot(otherUser[0], user):
-        return make_response(jsonify(status="success"))
+    if db.delete_trust_notification(userID, otherUserID):
+        return make_response(jsonify(status="success", message=message))
     else:
-        return make_response(jsonify(status="trust notification deletion unsuccessful"))
+        return make_response(jsonify(status="failed", error="trust notification deletion unsuccessful", message=message))

@@ -1,6 +1,6 @@
 import os
 from flask import Flask, send_from_directory
-from backend.interaction import createUser, createDevice#, logInWebUser, logOutWebUser, dashboardWebUser, authenticateDeviceUser, createAnonDeviceUser, createAnonWebUser
+from backend import interaction as inter
 from flask_cors import CORS
 
 
@@ -9,42 +9,57 @@ CORS(app)
 
 #backend
 
-# @app.route('/login-web-user', methods=['POST'])
-# def loginwebuser():
-#     return logInWebUser()
-
-# @app.route('/logout-web-user', methods=['POST'])
-# def logoutwebuser():
-#     return logOutWebUser()
-
-# @app.route('/dashboard-web-user', methods=['POST'])
-# def dashboardwebuser():
-#     return dashboardWebUser()
-
 @app.route('/create-user', methods=['POST'])
-def createuser():
-    return createUser()
+def create_user():
+    return inter.create_user()
+
+@app.route('/delete-user', methods=['POST'])
+def delete_user():
+    return inter.delete_user()
 
 @app.route('/create-device', methods=['POST'])
-def createdevice():
-    return createDevice()
+def create_device():
+    return inter.create_device()
 
+@app.route('/delete-device', methods=['POST'])
+def delete_device():
+    return inter.delete_device()
 
-#in time
+@app.route('/request-authentication', methods=['POST'])
+def request_authentication():
+    return inter.request_authentication()
 
-# @app.route('/authenticate-device-user', methods=['POST'])
-# def authDeviceUser():
-#     return authenticateDeviceUser()
-#     #authenticateDevice()
+@app.route('/update', methods=['POST'])
+def update():
+    return inter.update()
 
-# @app.route('/create-anonymous-web-user', methods=['POST'])
-# def creAnonWebUser():
-#     return createAnonWebUser()
+@app.route('/login', methods=['POST'])
+def login():
+    return inter.login()
 
-# @app.route('/create-anonymous-device-user', methods=['POST'])
-# def creAnonDeviceUser():
-#     return createAnonDeviceUser()
+@app.route('/logout', methods=['POST'])
+def logout():
+    return inter.logout()
 
+@app.route('/ask-trust', methods=['POST'])
+def ask_trust():
+    return inter.ask_trust()
+
+@app.route('/accept-trust', methods=['POST'])
+def accept_trust():
+    return inter.accept_trust()
+
+@app.route('/decline-trust', methods=['POST'])
+def decline_trust():
+    return inter.decline_trust()
+
+@app.route('/remove-trust', methods=['POST'])
+def remove_trust():
+    return inter.remove_trust()
+
+@app.route('/username-search', methods=['POST'])
+def username_search():
+    return inter.username_search()
 
 #frontend
 

@@ -1,106 +1,88 @@
-from backend import user
-from backend import device
+from flask.wrappers import Response
+from backend import user, device
 
-def createUser():
+def create_user() -> Response:
     return user.create()
 
-def deleteUser():
+def delete_user() -> Response:
     checkPass, errorResponse = user.authenticate()
     if not checkPass:
         return errorResponse
 
     return user.delete()
 
-def createDevice():
+def create_device() -> Response:
     checkPass, errorResponse = user.authenticate()
     if not checkPass:
         return errorResponse
     
     return device.create()
 
-def deleteDevice():
+def delete_device() -> Response:
     checkPass, errorResponse = user.authenticate()
     if not checkPass:
         return errorResponse
 
     return device.delete()
 
-def logIn():
+def login() -> Response:
     checkPass, errorResponse = user.authenticate()
-    if not checkPass:
-        return errorResponse
-
-    checkPass, errorResponse = device.authenticate()
     if not checkPass:
         return errorResponse
         
     return device.login()
     
-def logOut():
-    checkPass, errorResponse = device.authenticate()
+def request_authentication() -> Response:
+    return device.request_authentication()
+
+def logout() -> Response:
+    checkPass, errorResponse, message = device.authenticate()
     if not checkPass:
         return errorResponse
 
     return device.logout()
 
-def updateIP():
+def update() -> Response:
+    checkPass, errorResponse, message = device.authenticate()
+    if not checkPass:
+        return errorResponse
+    
+    return device.update(message)
+
+def ask_trust() -> Response:
+    checkPass, errorResponse, message = device.authenticate()
+    if not checkPass:
+        return errorResponse
+    
+    return user.create_trust_notification(message)
+
+def accept_trust() -> Response:
+    checkPass, errorResponse, message = device.authenticate()
+    if not checkPass:
+        return errorResponse
+
+    return user.create_trust(message)
+
+def decline_trust() -> Response:
+    checkPass, errorResponse, message = device.authenticate()
+    if not checkPass:
+        return errorResponse
+    
+    return user.delete_trust_notification(message)
+
+def remove_trust() -> Response:
+    checkPass, errorResponse, message = device.authenticate()
+    if not checkPass:
+        return errorResponse
+    
+    return user.delete_trust(message)
+
+def start_conversation() -> Response:
     checkPass, errorResponse = device.authenticate()
     if not checkPass:
         return errorResponse
     
-    return device.update()
+    return None
 
-def askTrust():
-    checkPass, errorResponse = device.authenticate()
-    if not checkPass:
-        return errorResponse
-
-    checkPass, errorResponse = device.checkLoggedIn()
-    if not checkPass:
-        return errorResponse
-    
-    return user.createTrustNot()
-
-def acceptTrust():
-    checkPass, errorResponse = device.authenticate()
-    if not checkPass:
-        return errorResponse
-
-    checkPass, errorResponse = device.checkLoggedIn()
-    if not checkPass:
-        return errorResponse
-
-    return user.createTrust()
-
-def declineTrust():
-    checkPass, errorResponse = device.authenticate()
-    if not checkPass:
-        return errorResponse
-
-    checkPass, errorResponse = device.checkLoggedIn()
-    if not checkPass:
-        return errorResponse
-    
-    return user.deleteTrustNot()
-
-def removeTrust():
-    checkPass, errorResponse = device.authenticate()
-    if not checkPass:
-        return errorResponse
-
-    checkPass, errorResponse = device.checkLoggedIn()
-    if not checkPass:
-        return errorResponse
-    
-    return user.deleteTrust()
-
-def converse():
-    checkPass, errorResponse = device.authenticate()
-    if not checkPass:
-        return errorResponse
-
-    checkPass, errorResponse = device.checkLoggedIn()
-    if not checkPass:
-        return errorResponse
-    
-    return device.converse()
+def username_search() -> Response:
+    return user.username_search()

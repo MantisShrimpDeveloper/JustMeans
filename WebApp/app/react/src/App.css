@@ -10,9 +10,9 @@
 
 .App {
   background-color: var(--jm-grey);
-  min-height: 100vh;
+  min-height: 98vh;
 }
 
 .page {
-  height: 80vh
+  height: calc(98vh - 150px)
 }
