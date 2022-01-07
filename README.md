@@ -1,2 +1,2 @@
 # JustMeans
-Peer-to-peer End-to-end Encryption Instant Messenger
+Peer-to-peer Cross-platform End-to-end Encryption Instant Messenger
